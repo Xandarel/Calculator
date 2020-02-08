@@ -12,7 +12,8 @@ namespace Calculator
         static void Main(string[] args)
         {
             string expression = Console.ReadLine();
-            Regex regex = new Regex(@"\(\d*[+|-|*|/]\d*\)");
+            //Regex regex = new Regex(@"\(\d*\.?\d*[+|-|*|/]\d*\.?\d*\)");
+            Regex regex = new Regex(@"\(.*\)");
             MatchCollection matches;
             do
             {
@@ -25,15 +26,10 @@ namespace Calculator
         }
         static void DecisionBrackets(string text, Match brackets)
         {
+            //Убираем скобки. Оставляем тупо выражение
             string br = brackets.ToString().Substring(1, brackets.Length-2);//Возможно нужно выделить в отдельный метод
-            int flag = 0;
-            foreach (var t in br)
-            {
-                if (!Char.IsDigit(t) && t != '.')
-                    break;
-                flag++;
-            }
-
+            Regex regex = new Regex(@"[+|-|*|/]");
+            MatchCollection matches = regex.Matches(br);
         }
     }
 }
