@@ -13,23 +13,37 @@ namespace Calculator
         {
             string expression = Console.ReadLine();
             //Regex regex = new Regex(@"\(\d*\.?\d*[+|-|*|/]\d*\.?\d*\)");
+            int bracketsPosition;
             Regex regex = new Regex(@"\(.*\)");
-            MatchCollection matches;
-            do
-            {
-                matches = regex.Matches(expression);
-                foreach (Match match in matches)
-                    DecisionBrackets(expression, match);
-
-            } while (matches.Count > 0);
+            do {
+                FindBrackets(expression, regex);
+            } while ((bracketsPosition = expression.Count(c => c == '(')) != 0);
             Console.ReadKey();
         }
-        static void DecisionBrackets(string text, Match brackets)
+        static void DecisionBrackets(string text)//TODO: не нравится переделать
         {
-            //Убираем скобки. Оставляем тупо выражение
-            string br = brackets.ToString().Substring(1, brackets.Length-2);//Возможно нужно выделить в отдельный метод
             Regex regex = new Regex(@"[+|-|*|/]");
-            MatchCollection matches = regex.Matches(br);
+            MatchCollection matchCollection = regex.Matches(text);
+            var numbers = text.Split('+','-','*','/');
+            var signs = new string[matchCollection.Count];
+            int positionInArray = 0;
+            foreach(var match in matchCollection)
+            {
+                signs[positionInArray] = match.ToString();
+                positionInArray++;
+            }
         }
+        static void FindBrackets(string text,Regex regex)
+        {
+            Match matches = regex.Match(text);
+            if (matches.Success)
+            {
+                string newText = DeleteBrackets(matches);
+                FindBrackets(newText, regex);
+            }
+            DecisionBrackets(text);
+        }
+
+        static string DeleteBrackets(Match match) => match.ToString().Substring(1, match.Length - 2);
     }
 }
