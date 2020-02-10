@@ -36,27 +36,32 @@ namespace Calculator
             if (signs.Length == 1)
                 return DecisionSign(Convert.ToDouble(numbers[0]), Convert.ToDouble(numbers[1]), signs[0]);
             else
-                for (positionInArray = 0; positionInArray < signs.Length; positionInArray++)
+            {
+                bool checkArray = true;
+                while (!signs.All(u=>u==null))
                 {
-                    if ((signs[positionInArray] == "+" || signs[positionInArray] == "-") &&
-                        (signs[positionInArray + 1] != "*" || signs[positionInArray + 1] != "*"))
+                    for (positionInArray = 0; positionInArray < signs.Length; positionInArray++)
                     {
-                        numbers[positionInArray + 1] = DecisionSign(Convert.ToDouble(numbers[positionInArray]),
-                            Convert.ToDouble(numbers[positionInArray + 1]),
-                            signs[positionInArray]).ToString();
-                        numbers[positionInArray] = null;
-                        signs[positionInArray] = null;
+                        if ((signs[positionInArray] == "+" || signs[positionInArray] == "-") &&
+                            (signs[positionInArray + 1] != "*" || signs[positionInArray + 1] != "*"))
+                        {
+                            numbers[positionInArray + 1] = DecisionSign(Convert.ToDouble(numbers[positionInArray]),
+                                                                        Convert.ToDouble(numbers[positionInArray + 1]),
+                                                                        signs[positionInArray]).ToString();
+                            numbers[positionInArray] = null;
+                            signs[positionInArray] = null;
+                        }
+                        else if (signs[positionInArray] == "*" || signs[positionInArray] == "/")
+                        {
+                            numbers[positionInArray + 1] = DecisionSign(Convert.ToDouble(numbers[positionInArray]),
+                                                                        Convert.ToDouble(numbers[positionInArray + 1]),
+                                                                        signs[positionInArray]).ToString();
+                            numbers[positionInArray] = null;
+                            signs[positionInArray] = null;
+                        }
                     }
-                    else if (signs[positionInArray] == "*" || signs[positionInArray] == "/")
-                    {
-                        numbers[positionInArray + 1] = DecisionSign(Convert.ToDouble(numbers[positionInArray]),
-                            Convert.ToDouble(numbers[positionInArray + 1]),
-                            signs[positionInArray]).ToString();
-                        numbers[positionInArray] = null;
-                        signs[positionInArray] = null;
-                    }
-                        
                 }
+            }
         }
         static void FindBrackets(string text,Regex regex)
         {
