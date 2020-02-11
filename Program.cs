@@ -24,44 +24,43 @@ namespace Calculator
         {
             Regex regex = new Regex(@"[+|-|*|/]");
             MatchCollection matchCollection = regex.Matches(text);
-            var numbers = text.Split('+','-','*','/');
-            var signs = new string[matchCollection.Count];
+            var numbers =new List<string> (text.Split('+', '-', '*', '/'));
+            var signs = new List<string>();
             int positionInArray = 0;
             foreach(var match in matchCollection)
-            {
-                signs[positionInArray] = match.ToString();
-                positionInArray++;
-            }
+                signs.Add(match.ToString());
 
-            if (signs.Length == 1)
-                return DecisionSign(Convert.ToDouble(numbers[0]), Convert.ToDouble(numbers[1]), signs[0]);
-            else
+            while (signs.Count != 0)
             {
-                bool checkArray = true;
-                while (!signs.All(u=>u==null))
-                {
-                    for (positionInArray = 0; positionInArray < signs.Length; positionInArray++)
-                    {
-                        if ((signs[positionInArray] == "+" || signs[positionInArray] == "-") &&
-                            (signs[positionInArray + 1] != "*" || signs[positionInArray + 1] != "*"))
+                if (signs.Count == 1)
+                    return DecisionSign(Convert.ToDouble(numbers[0]), Convert.ToDouble(numbers[1]), signs[0]);
+                else
+                    for (positionInArray = 0; positionInArray < signs.Count; positionInArray++)
+                        try
                         {
-                            numbers[positionInArray + 1] = DecisionSign(Convert.ToDouble(numbers[positionInArray]),
-                                                                        Convert.ToDouble(numbers[positionInArray + 1]),
-                                                                        signs[positionInArray]).ToString();
-                            numbers[positionInArray] = null;
-                            signs[positionInArray] = null;
+                            if ((signs[positionInArray] == "+" || signs[positionInArray] == "-") &&
+                                (signs[positionInArray + 1] != "*" || signs[positionInArray + 1] != "*"))
+                            {
+                                numbers.Insert(positionInArray, DecisionSign(Convert.ToDouble(numbers[positionInArray]),
+                                                                            Convert.ToDouble(numbers[positionInArray + 1]),
+                                                                            signs[positionInArray]).ToString());
+                                numbers.RemoveAt(positionInArray + 1);
+                                numbers.RemoveAt(positionInArray + 1);
+                                signs.RemoveAt(positionInArray);
+                            }
+                            else if (signs[positionInArray] == "*" || signs[positionInArray] == "/")
+                            {
+                                numbers.Insert(positionInArray, DecisionSign(Convert.ToDouble(numbers[positionInArray]),
+                                                                            Convert.ToDouble(numbers[positionInArray + 1]),
+                                                                            signs[positionInArray]).ToString());
+                                numbers.RemoveAt(positionInArray + 1);
+                                numbers.RemoveAt(positionInArray + 1);
+                                signs.RemoveAt(positionInArray);
+                            }
                         }
-                        else if (signs[positionInArray] == "*" || signs[positionInArray] == "/")
-                        {
-                            numbers[positionInArray + 1] = DecisionSign(Convert.ToDouble(numbers[positionInArray]),
-                                                                        Convert.ToDouble(numbers[positionInArray + 1]),
-                                                                        signs[positionInArray]).ToString();
-                            numbers[positionInArray] = null;
-                            signs[positionInArray] = null;
-                        }
-                    }
-                }
+                        catch { }
             }
+            return 0;//Заглушка. Сечас я считаю, что сюда код не доберется никогда.
         }
         static void FindBrackets(string text,Regex regex)
         {
