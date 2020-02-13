@@ -15,14 +15,17 @@ namespace Calculator
             //Regex regex = new Regex(@"\(\d*\.?\d*[+|-|*|/]\d*\.?\d*\)");
             int bracketsPosition;
             Regex regex = new Regex(@"\(.*\)");
+            string result;
             do {
-                FindBrackets(expression, regex);
+                expression = FindBrackets(expression, regex);
+                //expression = ReplaceTheBracket(Convert.ToDouble(result), expression, regex.Match(expression));
             } while ((bracketsPosition = expression.Count(c => c == '(')) != 0);
+            Console.WriteLine(DecisionBrackets(expression));
             Console.ReadKey();
         }
-        static double DecisionBrackets(string text)//TODO: не нравится переделать
+        static double DecisionBrackets(string text)
         {
-            Regex regex = new Regex(@"[+|-|*|/]");
+            Regex regex = new Regex(@"[+|\-|*|/]");
             MatchCollection matchCollection = regex.Matches(text);
             var numbers =new List<string> (text.Split('+', '-', '*', '/'));
             var signs = new List<string>();
@@ -35,9 +38,8 @@ namespace Calculator
                 if (signs.Count == 1)
                     return DecisionSign(Convert.ToDouble(numbers[0]), Convert.ToDouble(numbers[1]), signs[0]);
                 else
-                    for (positionInArray = 0; positionInArray < signs.Count; positionInArray++)
-                        try
-                        {
+                    try {
+                        for (positionInArray = 0; positionInArray < signs.Count; positionInArray++)
                             if ((signs[positionInArray] == "+" || signs[positionInArray] == "-") &&
                                 (signs[positionInArray + 1] != "*" || signs[positionInArray + 1] != "*"))
                             {
@@ -57,20 +59,23 @@ namespace Calculator
                                 numbers.RemoveAt(positionInArray + 1);
                                 signs.RemoveAt(positionInArray);
                             }
-                        }
-                        catch { }
-            }
-            return 0;//Заглушка. Сечас я считаю, что сюда код не доберется никогда.
+                    }
+                    catch { }
+                    }
+            return Convert.ToDouble(text);
         }
-        static void FindBrackets(string text,Regex regex)
+        static string FindBrackets(string text,Regex regex)
         {
             Match matches = regex.Match(text);
             if (matches.Success)
             {
                 string newText = DeleteBrackets(matches);
-                FindBrackets(newText, regex);
+                var output = DecisionBrackets(FindBrackets(newText, regex));
+                text= ReplaceTheBracket(output, text, matches);
+                return text;
             }
-            var result=DecisionBrackets(text);//TODO: дописать замену выражения на новое
+                var result = DecisionBrackets(text);//TODO: дописать замену выражения на новое
+                return result.ToString();
         }
 
         static string DeleteBrackets(Match match) => match.ToString().Substring(1, match.Length - 2);
@@ -91,5 +96,8 @@ namespace Calculator
                     return 0;
             }
         }
+
+        static string ReplaceTheBracket(double number, string text, Match match) => text.Replace(match.Value, number.ToString());
     }
+
 }
