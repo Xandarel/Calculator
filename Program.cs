@@ -7,15 +7,14 @@ using System.Text.RegularExpressions;
 
 namespace Calculator
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
             string expression = Console.ReadLine();
             //Regex regex = new Regex(@"\(\d*\.?\d*[+|-|*|/]\d*\.?\d*\)");
             int bracketsPosition;
-            Regex regex = new Regex(@"\(.*\)");
-            string result;
+            Regex regex = new Regex(@"\(.*?\)");
             do {
                 expression = FindBrackets(expression, regex);
                 //expression = ReplaceTheBracket(Convert.ToDouble(result), expression, regex.Match(expression));
@@ -23,7 +22,7 @@ namespace Calculator
             Console.WriteLine(DecisionBrackets(expression));
             Console.ReadKey();
         }
-        static double DecisionBrackets(string text)
+        public static double DecisionBrackets(string text)
         {
             Regex regex = new Regex(@"[+|\-|*|/]");
             MatchCollection matchCollection = regex.Matches(text);
@@ -64,7 +63,7 @@ namespace Calculator
                     }
             return Convert.ToDouble(text);
         }
-        static string FindBrackets(string text,Regex regex)
+        public static string FindBrackets(string text,Regex regex)
         {
             Match matches = regex.Match(text);
             if (matches.Success)
@@ -74,13 +73,13 @@ namespace Calculator
                 text= ReplaceTheBracket(output, text, matches);
                 return text;
             }
-                var result = DecisionBrackets(text);//TODO: дописать замену выражения на новое
+                var result = DecisionBrackets(text);
                 return result.ToString();
         }
 
-        static string DeleteBrackets(Match match) => match.ToString().Substring(1, match.Length - 2);
+        public static string DeleteBrackets(Match match) => match.ToString().Substring(1, match.Length - 2);
 
-        static double DecisionSign(double s1,double s2, string sign)
+        public static double DecisionSign(double s1,double s2, string sign)
         {
             switch (sign)//TODO: сделать тдельной функцией
             {
@@ -97,7 +96,7 @@ namespace Calculator
             }
         }
 
-        static string ReplaceTheBracket(double number, string text, Match match) => text.Replace(match.Value, number.ToString());
+        public static string ReplaceTheBracket(double number, string text, Match match) => text.Replace(match.Value, number.ToString());
     }
 
 }
