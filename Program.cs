@@ -14,7 +14,7 @@ namespace Calculator
             string expression = Console.ReadLine();
             //Regex regex = new Regex(@"\(\d*\.?\d*[+|-|*|/]\d*\.?\d*\)");
             int bracketsPosition;
-            Regex regex = new Regex(@"\(.*?\)");
+            Regex regex = new Regex(@"\(.*\)");
             do {
                 expression = FindBrackets(expression, regex);
                 //expression = ReplaceTheBracket(Convert.ToDouble(result), expression, regex.Match(expression));
@@ -69,9 +69,30 @@ namespace Calculator
             if (matches.Success)
             {
                 string newText = DeleteBrackets(matches);
-                var output = DecisionBrackets(FindBrackets(newText, regex));
-                text= ReplaceTheBracket(output, text, matches);
-                return text;
+                bool checkTrueFindOrNot = newText.IndexOf(')') < newText.IndexOf('(');
+                Regex NewRegex = new Regex(@"\(.*?\)");
+                if (checkTrueFindOrNot)
+                {
+                    MatchCollection matchCollection = NewRegex.Matches(text);
+                    foreach (var m in matchCollection)
+                    {
+                        var output = FindBrackets(m.ToString(), regex);
+                        if (checkTrueFindOrNot)
+                            text = ReplaceTheBracket(Convert.ToDouble(output), text, NewRegex.Match(text));
+                        else
+                            text = ReplaceTheBracket(Convert.ToDouble(output), text, matches);
+                    }
+                    return text;
+                }
+                else
+                {
+                    var output = DecisionBrackets(FindBrackets(newText, regex));
+                    if (checkTrueFindOrNot)
+                        text = ReplaceTheBracket(Convert.ToDouble(output), text, NewRegex.Match(text));
+                    else
+                        text = ReplaceTheBracket(Convert.ToDouble(output), text, matches);
+                    return text;
+                }
             }
                 var result = DecisionBrackets(text);
                 return result.ToString();
@@ -81,7 +102,7 @@ namespace Calculator
 
         public static double DecisionSign(double s1,double s2, string sign)
         {
-            switch (sign)//TODO: сделать тдельной функцией
+            switch (sign)
             {
                 case "+":
                     return s1 + s2;
