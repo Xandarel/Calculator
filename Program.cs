@@ -12,7 +12,6 @@ namespace Calculator
         static void Main(string[] args)
         {
             string expression = Console.ReadLine();
-            //Regex regex = new Regex(@"\(\d*\.?\d*[+|-|*|/]\d*\.?\d*\)");
             int bracketsPosition;
             Regex regex = new Regex(@"\(.*\)");
             do {
