@@ -8,7 +8,7 @@ namespace Calculator
 {
     class MathSymbol
     {
-        int position { get; set; }
-        char symbol { get; set; }
+        public int position { get; set; }
+        public string symbol { get; set; }
     }
 }
